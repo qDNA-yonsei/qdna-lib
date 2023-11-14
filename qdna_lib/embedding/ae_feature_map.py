@@ -281,7 +281,7 @@ class AeFeatureMap(BlueprintCircuit):
         while len(nodes) > 0:
             angles = [node.angle_y for node in nodes]
             ucry = ucr(RYGate, angles)
-            circuit.append(ucry, [target_qubit] + control_qubits[::-1])
+            circuit.compose(ucry, [target_qubit] + control_qubits[::-1], inplace=True)
             control_qubits.append(target_qubit)
             nodes = children(nodes)
             target_qubit -= 1
@@ -290,4 +290,4 @@ class AeFeatureMap(BlueprintCircuit):
                 circuit.barrier()
 
         for _ in range(self._reps):
-            self.append(circuit, self.qubits)
+            self.compose(circuit, self.qubits, inplace=True)

@@ -36,8 +36,7 @@ class TestAeFeatureMap(TestCase):
         feature_map = AeFeatureMap(n_qubits)
 
         circuit = QuantumCircuit(n_qubits)
-
-        circuit.append(feature_map, list(range(n_qubits)))
+        circuit.compose(feature_map, list(range(n_qubits)), inplace=True)
         circuit.assign_parameters(state_vector, inplace=True)
 
         state = Statevector(circuit)
