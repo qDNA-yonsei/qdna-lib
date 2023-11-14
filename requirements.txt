@@ -1,1 +1,6 @@
+qiskit
+qiskit-machine-learning
+qiskit-aer
+qiskit-algorithms
+torch
 qclib
