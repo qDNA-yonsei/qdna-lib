@@ -16,9 +16,8 @@
 https://arxiv.org/abs/2108.10182
 """
 
-import math
 from dataclasses import dataclass
-from qiskit.circuit import Parameter, ParameterExpression
+from qiskit.circuit import ParameterExpression
 from qiskit.utils import optionals as _optionals
 
 @dataclass
@@ -31,13 +30,13 @@ class Node:
     level: int
     left: "Node"
     right: "Node"
-    amplitude: ParameterExpression
+    norm: ParameterExpression
 
     def __str__(self):
         return (
             f"{self.level}_"
             f"{self.index}\n"
-            f"{self.amplitude}"
+            f"{self.norm}"
         )
 
 def sqrt(self):
@@ -79,15 +78,23 @@ def state_decomposition(nqubits, data):
         nqubits = nqubits - 1
         k = 0
         n_nodes = len(nodes)
-        while k < n_nodes:
-            amplitude = sqrt(
-                nodes[k].amplitude*nodes[k].amplitude + nodes[k + 1].amplitude*nodes[k + 1].amplitude
-            )
-            
+        if nqubits == 0:
+            # Optimization.
+            # The value of the first node is always 1, so there is no need to
+            # calculate it.
             new_nodes.append(
-                Node(nodes[k].index // 2, nqubits, nodes[k], nodes[k + 1], amplitude)
+                Node(nodes[k].index // 2, nqubits, nodes[k], nodes[k + 1], 1.0)
             )
-            k = k + 2
+        else:
+            while k < n_nodes:
+                norm = sqrt(
+                    nodes[k].norm*nodes[k].norm + nodes[k + 1].norm*nodes[k + 1].norm
+                )
+                
+                new_nodes.append(
+                    Node(nodes[k].index // 2, nqubits, nodes[k], nodes[k + 1], norm)
+                )
+                k = k + 2
 
     tree_root = new_nodes[0]
     return tree_root
