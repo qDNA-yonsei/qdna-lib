@@ -24,7 +24,7 @@ from qiskit.circuit.quantumcircuit import QuantumCircuit
 from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.circuit import Parameter, ParameterVector, ParameterExpression
 
-from qiskit.circuit.library import BlueprintCircuit, RYGate, RZGate
+from qiskit.circuit.library import BlueprintCircuit, RYGate
 
 from qdna_lib.embedding.util.state_tree_preparation import state_decomposition
 from qdna_lib.embedding.util.angle_tree_preparation import create_angles_tree

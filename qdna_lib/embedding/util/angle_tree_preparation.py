@@ -16,10 +16,9 @@
 https://arxiv.org/abs/2108.10182
 """
 
-import math
 from dataclasses import dataclass
 from qclib.state_preparation.util.tree_utils import is_leaf
-from qiskit.circuit import Parameter, ParameterExpression
+from qiskit.circuit import ParameterExpression
 
 @dataclass
 class NodeAngleTree:
@@ -47,10 +46,8 @@ def create_angles_tree(state_tree):
     :param tree: used in the recursive calls
     :return: tree with angles that will be used to perform the state preparation
     """
-    amplitude = 0.0
-    if state_tree.amplitude != 0.0:
-        amplitude = state_tree.right.amplitude / state_tree.amplitude
-
+    
+    amplitude = state_tree.right.norm / state_tree.norm
     angle_y = 2 * amplitude.arcsin()
 
     node = NodeAngleTree(
