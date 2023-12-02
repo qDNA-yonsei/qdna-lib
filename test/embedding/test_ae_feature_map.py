@@ -29,7 +29,7 @@ from qiskit.quantum_info import Statevector
 class TestAeFeatureMap(TestCase):
 
     def test_state(self):
-        n_qubits = 4
+        n_qubits = 6
         state_vector = np.random.rand(2**n_qubits)
         state_vector = state_vector / np.linalg.norm(state_vector)
 
