@@ -39,7 +39,7 @@ class Node:
             f"{self.norm}"
         )
 
-def sqrt(self):
+def _sqrt(self):
     """Square root of a ParameterExpression"""
     if _optionals.HAS_SYMENGINE:
         import symengine
@@ -87,7 +87,7 @@ def state_decomposition(nqubits, data):
             )
         else:
             while k < n_nodes:
-                norm = sqrt(
+                norm = _sqrt(
                     nodes[k].norm*nodes[k].norm + nodes[k + 1].norm*nodes[k + 1].norm
                 )
                 
