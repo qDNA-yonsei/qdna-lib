@@ -12,28 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable, List, Union
-from qdna_lib.embedding.nqe_base import NqeBase
-from qdna_lib.embedding.iqp_feature_map import IqpFeatureMap
+from typing import Callable, Optional
+import numpy as np
+from qiskit.circuit.library import ZFeatureMap
+from qdna.embedding.nqe_base import NqeBase
 
 
-class NqeIqpFeatureMap(IqpFeatureMap, NqeBase):
+class NqeZFeatureMap(ZFeatureMap, NqeBase):
 
     def __init__(
         self,
-        num_qubits: int,
+        feature_dimension: int,
         reps: int = 2,
-        entanglement: Union[str, List[List[int]], Callable[[int], List[int]]] = "full",
+        data_map_func: Optional[Callable[[np.ndarray], float]] = None,
         parameter_prefix: str = "x",
         insert_barriers: bool = False,
-        name: str = "NqeIqpFeatureMap",
+        name: str = "NqeZFeatureMap",
         nn = None,
     ) -> None:
 
         super().__init__(
-            num_qubits=num_qubits,
+            feature_dimension=feature_dimension,
             reps=reps,
-            entanglement=entanglement,
+            data_map_func=data_map_func,
             parameter_prefix=parameter_prefix,
             insert_barriers=insert_barriers,
             name=name
@@ -41,11 +42,11 @@ class NqeIqpFeatureMap(IqpFeatureMap, NqeBase):
 
         NqeBase.__init__(self, nn=nn)
 
-        self._feature_map = IqpFeatureMap
+        self._feature_map = ZFeatureMap
         self._init_parameters = {
-            'num_qubits':num_qubits,
+            'feature_dimension':feature_dimension,
             'reps':reps,
-            'entanglement':entanglement,
+            'data_map_func':data_map_func,
             'parameter_prefix':parameter_prefix,
             'insert_barriers':insert_barriers,
             'name':name

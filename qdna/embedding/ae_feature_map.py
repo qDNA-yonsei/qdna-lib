@@ -19,19 +19,18 @@ from __future__ import annotations
 
 from typing import Sequence, Mapping
 
-import numpy
 from qiskit.circuit.quantumcircuit import QuantumCircuit
 from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.circuit import Parameter, ParameterVector, ParameterExpression
 
 from qiskit.circuit.library import BlueprintCircuit, RYGate
 
-from qdna_lib.embedding.util.state_tree_preparation import state_decomposition
-from qdna_lib.embedding.util.angle_tree_preparation import create_angles_tree
-from qdna_lib.embedding.util.ucr import ucr
-
-#from qclib.gates.ucr import ucr
 from qclib.state_preparation.util.tree_utils import children
+
+from qdna.embedding.util.state_tree_preparation import state_decomposition
+from qdna.embedding.util.angle_tree_preparation import create_angles_tree
+from qdna.embedding.util.ucr import ucr
+
 
 class AeFeatureMap(BlueprintCircuit):
     """The AeFeatureMap circuit class.
@@ -47,7 +46,7 @@ class AeFeatureMap(BlueprintCircuit):
         parameter_prefix: str = "x",
         name: str | None = "AeFeatureMap"
     ) -> None:
-        
+
         super().__init__(name=name)
 
         self._num_qubits: int | None = None
@@ -256,7 +255,7 @@ class AeFeatureMap(BlueprintCircuit):
         """
 
         return 2**self.num_qubits
-    
+
 
     def _build(self) -> None:
         """If not already built, build the circuit."""

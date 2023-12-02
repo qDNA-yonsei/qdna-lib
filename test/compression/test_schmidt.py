@@ -17,11 +17,12 @@ Tests for the schmidt.py module.
 """
 
 from unittest import TestCase
-import numpy as np
 import random
+import numpy as np
 from qiskit import QuantumCircuit
-from qdna_lib.compression import SchmidtCompressor
 from qiskit.quantum_info import Statevector
+from qdna.compression import SchmidtCompressor
+
 
 # pylint: disable=missing-function-docstring
 # pylint: disable=missing-class-docstring
@@ -34,7 +35,7 @@ class TestSchmidt(TestCase):
         state_vector = np.random.rand(2**n_qubits) + np.random.rand(2**n_qubits) * 1j
         state_vector = state_vector / np.linalg.norm(state_vector)
 
-        
+
         partition = random.sample(range(n_qubits), n_qubits//2)
         compressor = SchmidtCompressor(state_vector, opt_params={'partition': partition})
         decompressor = compressor.inverse()
@@ -47,7 +48,7 @@ class TestSchmidt(TestCase):
         circuit.append(decompressor.definition, list(range(n_qubits)))
 
         state = Statevector(circuit)
-        
+
         self.assertTrue(np.allclose(state_vector, state))
 
     def test_trash(self):

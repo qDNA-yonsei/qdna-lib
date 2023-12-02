@@ -15,7 +15,7 @@
 from typing import Callable, List, Union, Optional
 import numpy as np
 from qiskit.circuit.library import ZZFeatureMap
-from qdna_lib.embedding.nqe_base import NqeBase
+from qdna.embedding.nqe_base import NqeBase
 
 
 class NqeZZFeatureMap(ZZFeatureMap, NqeBase):

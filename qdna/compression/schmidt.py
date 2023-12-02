@@ -19,8 +19,8 @@ Implements the quantum state compressor defined at ... .
 from qiskit import QuantumCircuit
 from qclib.unitary import unitary as decompose_unitary
 from qclib.isometry import decompose as decompose_isometry
-from qdna_lib.compression.compressor import Compressor
 from qclib.entanglement import schmidt_decomposition, _to_qubits
+from qdna.compression.compressor import Compressor
 
 # pylint: disable=maybe-no-member
 
