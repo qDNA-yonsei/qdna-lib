@@ -19,8 +19,8 @@ Tests for the ae_feature_map.py module.
 from unittest import TestCase
 import numpy as np
 from qiskit import QuantumCircuit
-from qdna_lib.embedding import AeFeatureMap
 from qiskit.quantum_info import Statevector
+from qdna.embedding import AeFeatureMap
 
 # pylint: disable=missing-function-docstring
 # pylint: disable=missing-class-docstring

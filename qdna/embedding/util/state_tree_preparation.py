@@ -19,6 +19,8 @@ https://arxiv.org/abs/2108.10182
 from dataclasses import dataclass
 from qiskit.circuit import ParameterExpression
 from qiskit.utils import optionals as _optionals
+from sympy import sqrt as _sqrt
+import symengine
 
 @dataclass
 class Node:
@@ -42,12 +44,8 @@ class Node:
 def _sqrt(self):
     """Square root of a ParameterExpression"""
     if _optionals.HAS_SYMENGINE:
-        import symengine
-
         return self._call(symengine.sqrt)
     else:
-        from sympy import sqrt as _sqrt
-
         return self._call(_sqrt)
 
 def state_decomposition(nqubits, data):
@@ -90,7 +88,7 @@ def state_decomposition(nqubits, data):
                 norm = _sqrt(
                     nodes[k].norm*nodes[k].norm + nodes[k + 1].norm*nodes[k + 1].norm
                 )
-                
+
                 new_nodes.append(
                     Node(nodes[k].index // 2, nqubits, nodes[k], nodes[k + 1], norm)
                 )
