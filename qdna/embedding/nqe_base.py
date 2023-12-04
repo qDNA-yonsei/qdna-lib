@@ -75,16 +75,16 @@ class NqeBase():
         if distance == 'fidelity': # only 'fidelity' for now.
             model = _NetFidelity(qnn, self.nn)
 
-        if optimizer == None:
+        if optimizer is None:
             optimizer = optim.Adam(model.parameters(), lr=0.01)
-        if loss_func == None:
+        if loss_func is None:
             loss_func = MSELoss()
 
         # Start training
         loss_list = []  # Store loss history
         model.train()   # Set model to training mode
 
-        for iter in range(iters):
+        for i in range(iters):
             X1_batch, X2_batch, Y_batch = self.new_data(batch_size, X, Y) # Random sampling of data.
 
             optimizer.zero_grad(set_to_none=True)  # Initialize gradient
@@ -97,11 +97,9 @@ class NqeBase():
 
             if verbose:
                 print(
-                    "Training [{:.0f}%]\tLoss: {:.4f}\tAvg. Loss: {:.4f}".format(
-                        100.0 * (iter + 1) / iters,
-                        loss_list[-1],
-                        sum(loss_list) / len(loss_list)
-                    )
+                    f"Training [{100.0 * (i + 1) / iters:.0f}%]\t"
+                    f"Loss: {loss_list[-1]:.4f}\t"
+                    f"Avg. Loss: {sum(loss_list) / len(loss_list):.4f}"
                 )
 
         self.model = model
