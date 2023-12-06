@@ -19,6 +19,8 @@ from __future__ import annotations
 
 from typing import Sequence, Mapping
 
+from math import pi
+
 from qiskit.circuit.quantumcircuit import QuantumCircuit
 from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.circuit import Parameter, ParameterVector, ParameterExpression
@@ -27,7 +29,7 @@ from qiskit.circuit.library import BlueprintCircuit, RYGate
 
 from qclib.state_preparation.util.tree_utils import children
 
-from qdna.embedding.util.state_tree_preparation import state_decomposition
+from qdna.embedding.util.state_tree_preparation import state_decomposition, _sign
 from qdna.embedding.util.angle_tree_preparation import create_angles_tree
 from qdna.embedding.util.ucr import ucr
 
@@ -44,7 +46,9 @@ class AeFeatureMap(BlueprintCircuit):
         reps: int = 1,
         insert_barriers: bool = False,
         parameter_prefix: str = "x",
-        name: str | None = "AeFeatureMap"
+        name: str | None = "AeFeatureMap",
+        normalize: bool = False,
+        set_global_phase: bool = False
     ) -> None:
 
         super().__init__(name=name)
@@ -56,6 +60,8 @@ class AeFeatureMap(BlueprintCircuit):
         self._initial_state: QuantumCircuit | None = None
         self._initial_state_circuit: QuantumCircuit | None = None
         self._bounds: list[tuple[float | None, float | None]] | None = None
+        self._normalize = normalize
+        self._set_global_phase = set_global_phase
 
         if int(reps) != reps:
             raise TypeError("The value of reps should be int.")
@@ -270,7 +276,7 @@ class AeFeatureMap(BlueprintCircuit):
         circuit = QuantumCircuit(*self.qregs, name=self.name)
         params = ParameterVector(self._parameter_prefix, length=self.num_parameters_settable)
 
-        state_tree = state_decomposition(self.num_qubits, params)
+        state_tree = state_decomposition(self.num_qubits, params, normalize=self._normalize)
         angle_tree = create_angles_tree(state_tree)
 
         nodes = [angle_tree]
@@ -280,7 +286,9 @@ class AeFeatureMap(BlueprintCircuit):
         while len(nodes) > 0:
             angles = [node.angle_y for node in nodes]
             ucry = ucr(RYGate, angles)
-            circuit.compose(ucry, [target_qubit] + control_qubits[::-1], inplace=True)
+            circuit.compose(
+                ucry, [target_qubit] + control_qubits[::-1], inplace=True, wrap=False
+            )
             control_qubits.append(target_qubit)
             nodes = children(nodes)
             target_qubit -= 1
@@ -288,5 +296,11 @@ class AeFeatureMap(BlueprintCircuit):
             if self._insert_barriers and target_qubit >= 0:
                 circuit.barrier()
 
+        # As we only have `pi` phases (negative sign of a real number),
+        # the global phase only depends on the first coordinate of the
+        # state vector.
+        if self._set_global_phase:
+            circuit.global_phase = ((_sign(params[0])-1) / -2) * pi
+
         for _ in range(self._reps):
-            self.compose(circuit, self.qubits, inplace=True)
+            self.compose(circuit, self.qubits, inplace=True, wrap=False)
