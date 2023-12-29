@@ -163,8 +163,8 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
             if improved:
                 break
 
-    # Sorts the sets
-    if sorted(set_a)[0] > sorted(set_b)[0]:
+    # Sorts the sets when the subsystem sizes are equal
+    if size_a == size_b and sorted(set_a)[0] > sorted(set_b)[0]:
         set_a, set_b = set_b, set_a
 
     # Calculate the sum of weights of edges between the two sets
