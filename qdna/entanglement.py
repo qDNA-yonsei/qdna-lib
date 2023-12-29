@@ -17,6 +17,7 @@ import random
 import networkx as nx
 from qiskit.quantum_info import partial_trace, Statevector
 import numpy as np
+from scipy.linalg import logm
 
 def concurrence(rho_ab):
     '''
@@ -48,9 +49,9 @@ def mutual_information(rho_ab):
     rho_b = partial_trace(rho_ab, [1])
 
     # Compute the Von Neumann entropy for each density matrix
-    s_a = -np.trace(rho_a @ rho_a.log2()).real
-    s_b = -np.trace(rho_b @ rho_b.log2()).real
-    s_ab = -np.trace(rho_ab @ rho_ab.log2()).real
+    s_a = -np.trace(rho_a @ logm(rho_a)).real
+    s_b = -np.trace(rho_b @ logm(rho_b)).real
+    s_ab = -np.trace(rho_ab @ logm(rho_ab)).real
 
     # Calculate the mutual information
     return s_a + s_b - s_ab
