@@ -49,6 +49,11 @@ def mutual_information(rho_ab):
     rho_b = partial_trace(rho_ab, [0])
 
     # Compute the Von Neumann entropy for each density matrix
+    #     To calculate entropies, it is convenient to calculate the
+    #     eigendecomposition of \rho.
+    #         S(\rho) = -sum_i( \lambda_i * ln(\lambda_i)  )
+    #     But as the matrices are small, I'll use the definition to
+    #     make it easier to read.
     s_a = -np.trace(rho_a @ logm(rho_a)).real
     s_b = -np.trace(rho_b @ logm(rho_b)).real
     s_ab = -np.trace(rho_ab @ logm(rho_ab)).real
