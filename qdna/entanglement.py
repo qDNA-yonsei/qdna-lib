@@ -45,8 +45,8 @@ def mutual_information(rho_ab):
     qubits. It includes both classical and quantum correlations.
     '''
     # Compute the reduced density matrices for each qubit
-    rho_a = partial_trace(rho_ab, [0])
-    rho_b = partial_trace(rho_ab, [1])
+    rho_a = partial_trace(rho_ab, [1])
+    rho_b = partial_trace(rho_ab, [0])
 
     # Compute the Von Neumann entropy for each density matrix
     s_a = -np.trace(rho_a @ logm(rho_a)).real
