@@ -50,7 +50,7 @@ def mutual_information(rho_ab):
 
     # Compute the Von Neumann entropy for each density matrix
     #     To calculate entropies, it is convenient to calculate the
-    #     eigendecomposition of \rho.
+    #     eigendecomposition of \rho:
     #         S(\rho) = -sum_i( \lambda_i * ln(\lambda_i)  )
     #     But as the matrices are small, I'll use the definition to
     #     make it easier to read.
@@ -66,6 +66,8 @@ def initialize_entanglement_graph(state_vector, n_qubits, entanglement_measure=c
     Initialize a graph where nodes represent qubits and the weights represent
     the entanglement between pairs of qubits in a register of `n` qubits for a
     pure state.
+
+    O(n^2)
     '''
     # Create a graph
     graph = nx.Graph()
@@ -92,6 +94,10 @@ def initialize_entanglement_graph(state_vector, n_qubits, entanglement_measure=c
 def min_cut_fixed_size_optimal(graph, size_a, size_b):
     '''
     Optimal solution to the minimum cut problem with fixed sizes for the sets.
+
+    O(n! / k!(n-k)!) x O(m), where m is the number of edges in the graph.
+    The total number of edges m in a complete graph with n nodes is given by
+    m = n(n-1) / 2
     '''
     nodes = list(graph.nodes())
     min_cut_weight = float('inf')
@@ -130,7 +136,7 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
         n_b: subsystem B number of qubits.
         m: number of edges between a node and subsystem B (typically equal to n_b).
 
-        Example (n_a=n_b=n/2):
+        Example worst-case scenario (n_a=n_b=n/2):
         O(k * n^3)
     '''
     nodes = list(graph.nodes())
