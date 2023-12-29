@@ -61,7 +61,7 @@ def mutual_information(rho_ab):
     # Calculate the mutual information
     return s_a + s_b - s_ab
 
-def initialize_entanglement_graph(state_vector, n_qubits, quantify_shared_info=concurrence):
+def initialize_entanglement_graph(state_vector, n_qubits, entanglement_measure=concurrence):
     '''
     Initialize a graph where nodes represent qubits and the weights represent
     the entanglement between pairs of qubits in a register of `n` qubits for a
@@ -82,7 +82,7 @@ def initialize_entanglement_graph(state_vector, n_qubits, quantify_shared_info=c
             rho_ij = partial_trace(psi, list(set(range(n_qubits)).difference([i,j])))
 
             # Compute the Von Neumann entropy (entanglement measure)
-            shared_info = quantify_shared_info(rho_ij)
+            shared_info = entanglement_measure(rho_ij)
 
             # Add an edge with this entanglement measure as weight
             graph.add_edge(i, j, weight=shared_info)
