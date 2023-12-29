@@ -17,7 +17,6 @@ https://arxiv.org/abs/2108.10182
 """
 
 from dataclasses import dataclass
-import numpy as np
 from qiskit.circuit import ParameterExpression
 from qiskit.utils import optionals as _optionals
 from sympy import sqrt as sp_sqrt

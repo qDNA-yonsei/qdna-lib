@@ -83,11 +83,16 @@ class SchmidtCompressor(Compressor):
             self.partition = self._default_partition(self.num_qubits)
             self.svd = "auto"
         else:
-            self.low_rank = 0 if opt_params.get("lr") is None else opt_params.get("lr")
-            self.partition = sorted(opt_params.get("partition"))
-            self.isometry_scheme = "ccd" if opt_params.get("iso_scheme") is None else opt_params.get("iso_scheme")
-            self.unitary_scheme = "qsd" if opt_params.get("unitary_scheme") is None else opt_params.get("unitary_scheme")
-            self.svd = "auto" if opt_params.get("svd") is None else opt_params.get("svd")
+            self.low_rank = 0 if opt_params.get("lr") is None else \
+                opt_params.get("lr")
+            self.partition = self._default_partition(self.num_qubits) if \
+                opt_params.get("partition") is None else sorted(opt_params.get("partition"))
+            self.isometry_scheme = "ccd" if opt_params.get("iso_scheme") is None else \
+                opt_params.get("iso_scheme")
+            self.unitary_scheme = "qsd" if opt_params.get("unitary_scheme") is None else \
+                opt_params.get("unitary_scheme")
+            self.svd = "auto" if opt_params.get("svd") is None else \
+                opt_params.get("svd")
 
         # The trash and latent qubits must take into account that the qiskit qubits are reversed.
         complement = sorted(
@@ -118,7 +123,7 @@ class SchmidtCompressor(Compressor):
         circuit, reg_a, reg_b = self._create_quantum_circuit()
 
         # Schmidt decomposition
-        rank, svd_u, singular_values, svd_v = schmidt_decomposition(
+        rank, svd_u, _, svd_v = schmidt_decomposition(
             self.params, reg_a, rank=self.low_rank, svd=self.svd
         )
 
