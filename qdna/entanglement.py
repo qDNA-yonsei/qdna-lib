@@ -67,7 +67,7 @@ def initialize_entanglement_graph(state_vector, n_qubits, entanglement_measure=c
     the entanglement between pairs of qubits in a register of `n` qubits for a
     pure state.
 
-    O(n^2)
+    O(n^2) x O(2^n)
     '''
     # Create a graph
     graph = nx.Graph()
@@ -128,6 +128,14 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
     '''
     Heuristic approach for the Min-Cut problem with a fixed number of nodes in
     each partition.
+    
+    This approach aims to find a partition of the graph where the total edge
+    weight crossing the cut is as low as possible, given the size constraints.
+    The algorithm iteratively attempts to reduce the total weight of the cut by
+    swapping nodes between sets A and B, provided the swap decreases the total
+    weight of the cut.
+    This is a heuristic approach and may not always find the globally optimal
+    solution, especially for complex or large graphs.
 
     O(k * n_a * n_b * m):
         k: number of iterations (vary significantly based on the graph's
