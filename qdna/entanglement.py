@@ -163,17 +163,20 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
         improved = False
         for node in set_a:
             for other_node in set_b:
-                set_c = set_b.copy()
-                set_c.remove(other_node)
-                set_c.add(node)
-                if calculate_cut_weight(node, set_b) > calculate_cut_weight(other_node, set_c):
+                weight_node = calculate_cut_weight(node, set_b)
+                set_b.remove(other_node)
+                set_b.add(node)
+                weight_other_node = calculate_cut_weight(other_node, set_b)
+                if weight_node > weight_other_node:
                     # Swap nodes
                     set_a.remove(node)
-                    set_b.add(node)
-                    set_b.remove(other_node)
                     set_a.add(other_node)
                     improved = True
                     break
+                else:
+                    set_b.remove(node)
+                    set_b.add(other_node)
+
             if improved:
                 break
 
