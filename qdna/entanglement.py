@@ -128,7 +128,7 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
     '''
     Heuristic approach for the Min-Cut problem with a fixed number of nodes in
     each partition.
-    
+
     This approach aims to find a partition of the graph where the total edge
     weight crossing the cut is as low as possible, given the size constraints.
     The algorithm iteratively attempts to reduce the total weight of the cut by
@@ -154,28 +154,39 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
     set_a = set(nodes[:size_a])
     set_b = set(nodes[size_a:size_a + size_b])
 
-    def calculate_cut_weight(node, set_b):
-        return sum(graph[node][neighbor]['weight'] for neighbor in graph[node] if neighbor in set_b)
+    def swapping_weight(node, other_node, set_node, set_other_node):
+        # Entanglement (without - with) swapping.
+        # A positive result indicates that a swap should be made
+        # to reduce entanglement. That is, the entanglement with
+        # a swap is smaller than without.
+        return \
+        sum(graph[node][neighbor]['weight']
+                for neighbor in set_other_node if neighbor is not other_node) - \
+        sum(graph[node][neighbor]['weight']
+                for neighbor in set_node if neighbor is not node)
 
     # Iteratively try to improve the cut by swapping nodes between A and B
     improved = True
     while improved:
         improved = False
-        for node in set_a:
-            for other_node in set_b:
-                weight_node = calculate_cut_weight(node, set_b)
-                set_b.remove(other_node)
-                set_b.add(node)
-                weight_other_node = calculate_cut_weight(other_node, set_b)
-                if weight_node > weight_other_node:
-                    # Swap nodes
-                    set_a.remove(node)
-                    set_a.add(other_node)
+        for node_a in set_a:
+            for node_b in set_b:
+                weight_a = swapping_weight(node_a, node_b, set_a, set_b)
+                weight_b = swapping_weight(node_b, node_a, set_b, set_a)
+                total_weight = weight_a + weight_b
+                # Here, the entanglements of both nodes are
+                # considered simultaneously.
+                if total_weight > 0:
+                    # Swap the nodes if the total entanglement with the swap is
+                    # smaller. In other words, the entanglement without
+                    # swapping is greater, which means that `total_weight` is
+                    # positive.
+                    set_a.remove(node_a)
+                    set_b.remove(node_b)
+                    set_a.add(node_b)
+                    set_b.add(node_a)
                     improved = True
                     break
-                else:
-                    set_b.remove(node)
-                    set_b.add(other_node)
 
             if improved:
                 break
