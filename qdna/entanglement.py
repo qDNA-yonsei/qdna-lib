@@ -43,17 +43,20 @@ def mutual_information(rho_ab):
     '''
     Mutual information quantifies the total amount of correlation between two
     qubits. It includes both classical and quantum correlations.
+
+    To calculate the entropies, it is convenient to calculate the
+    eigendecomposition of `rho` and use the eigenvalues `lambda_i` to determine
+    the entropy:
+        `S(rho) = -sum_i( lambda_i * ln(lambda_i)  )`
+    But as the matrices are small, I'll use the definition to make the function
+    easier to read:
+        `S(rho) = -Tr( rho @ ln(rho)  )`
     '''
     # Compute the reduced density matrices for each qubit
     rho_a = partial_trace(rho_ab, [1])
     rho_b = partial_trace(rho_ab, [0])
 
     # Compute the Von Neumann entropy for each density matrix
-    #     To calculate entropies, it is convenient to calculate the
-    #     eigendecomposition of \rho:
-    #         S(\rho) = -sum_i( \lambda_i * ln(\lambda_i)  )
-    #     But as the matrices are small, I'll use the definition to
-    #     make it easier to read.
     s_a = -np.trace(rho_a @ logm(rho_a)).real
     s_b = -np.trace(rho_b @ logm(rho_b)).real
     s_ab = -np.trace(rho_ab @ logm(rho_ab)).real
