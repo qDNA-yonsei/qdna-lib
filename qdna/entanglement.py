@@ -204,3 +204,24 @@ def min_cut_fixed_size_heuristic(graph, size_a, size_b):
     )
 
     return (set_a, set_b), cut_weight
+
+
+# D-Wave functions
+
+def graph_to_qubo(graph):
+    '''
+    Map the graph to a QUBO model.
+    '''
+    qubo = {}
+
+    max_weight = max(weight for _, _, weight in graph.edges(data='weight'))
+
+    for i, j, weight in graph.edges(data='weight'):
+        # Set qubo_{ij} to be `max_weight - weight` for min-cut.
+        weight = max_weight - weight
+        qubo[(i, i)] = qubo.get((i, i), 0) - weight
+        qubo[(j, j)] = qubo.get((j, j), 0) - weight
+        qubo[(i, j)] = qubo.get((i, j), 0) + 2 * weight
+
+    return qubo
+
