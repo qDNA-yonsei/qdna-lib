@@ -18,6 +18,7 @@ import networkx as nx
 from qiskit.quantum_info import partial_trace, Statevector
 import numpy as np
 from scipy.linalg import logm
+from dwave.samplers import SimulatedAnnealingSampler
 
 def concurrence(rho_ab):
     '''
@@ -246,3 +247,43 @@ def graph_to_ising(graph):
 
     return ising, local_field
 
+def min_cut_dwave(graph, size_a=None, sample_method='ising', sampler=SimulatedAnnealingSampler(), num_reads=100):
+
+    if sample_method == 'qubo':
+        # Map the graph to a QUBO model.
+        qubo = graph_to_qubo(graph)
+        response = sampler.sample_qubo(qubo, num_reads=num_reads)
+    else:
+        # Map the graph to an Ising model.
+        ising, local_field = graph_to_ising(graph)
+        response = sampler.sample_ising(local_field, ising, num_reads=num_reads)
+
+    # Find the sample with the lowest energy (best result), respecting the size of the block.
+    min_cut_weight = float('inf')
+    set_a = None
+    if size_a is not None:
+        for sample, energy in response.data(['sample', 'energy']):
+            if energy < min_cut_weight and sum(v for v in sample.values() if v==1) == size_a:
+                min_cut_weight = energy
+                set_a = sample
+    else:
+        set_a = response.first.sample
+        min_cut_weight = response.first.energy
+
+    # Subsystem B is the complement of subsystem A.
+    nodes = set(graph.nodes())
+    set_a = {k for k, v in set_a.items() if v == 1}
+    size_a = len(set_a)
+    set_b = nodes - set_a
+    size_b = len(set_b)
+
+    # Sorts the sets when the subsystem sizes are equal.
+    if size_a == size_b and sorted(set_a)[0] > sorted(set_b)[0]:
+        set_a, set_b = set_b, set_a
+
+    # Calculate the sum of weights of edges between the two sets.
+    cut_weight = sum(
+        graph[u][v]['weight'] for u in set_a for v in set_b if graph.has_edge(u, v)
+    )
+
+    return (set_a, set_b), cut_weight
