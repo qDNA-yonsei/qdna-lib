@@ -225,3 +225,24 @@ def graph_to_qubo(graph):
 
     return qubo
 
+def graph_to_ising(graph):
+    '''
+    Map the graph to an Ising model.
+    '''
+    ising = {}
+    local_field = {}
+
+    max_weight = max(weight for _, _, weight in graph.edges(data='weight'))
+
+    # Add interaction strengths and local fields.
+    for i in graph.nodes():
+        local_field[i] = 0  # local fields
+        for j in graph.nodes():
+            if i < j:
+                # For a fully connected graph, define the interaction
+                # between every pair of nodes (i, j).
+                # Set ising_{ij} to be `max_weight - weight` for min-cut.
+                ising[(i, j)] = max_weight - graph[i][j]['weight']
+
+    return ising, local_field
+
