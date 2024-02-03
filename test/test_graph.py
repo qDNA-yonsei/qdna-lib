@@ -19,7 +19,7 @@ Tests for the entanglement.py module.
 from unittest import TestCase
 from math import isclose
 import numpy as np
-from qdna.quantum_info import entanglement_graph
+from qdna.quantum_info import correlation_graph, concurrence
 from qdna.graph import min_cut_fixed_size_optimal, \
                        min_cut_fixed_size_heuristic
 
@@ -41,12 +41,12 @@ class TestEntanglement(TestCase):
 
         state_vector = np.kron(state_vector1, state_vector2)
 
-        graph = entanglement_graph(state_vector, 6)
+        graph = correlation_graph(state_vector, 6, correlation_measure=concurrence)
         (set_a, set_b), cut_weight = min_cut_fixed_size_optimal(graph, 3, 3)
 
         self.assertTrue(isclose(cut_weight, 0.0))
-        self.assertTrue(np.allclose(sorted(set_a), [0, 1, 2]))
-        self.assertTrue(np.allclose(sorted(set_b), [3, 4, 5]))
+        self.assertTrue(np.allclose(sorted(sum(set_a, ())), [0, 1, 2]))
+        self.assertTrue(np.allclose(sorted(sum(set_b, ())), [3, 4, 5]))
 
     def test_min_cut_heuristic_product_state(self):
         n_qubits = 3
@@ -59,12 +59,12 @@ class TestEntanglement(TestCase):
 
         state_vector = np.kron(state_vector1, state_vector2)
 
-        graph = entanglement_graph(state_vector, 6)
+        graph = correlation_graph(state_vector, 6, correlation_measure=concurrence)
         (set_a, set_b), cut_weight = min_cut_fixed_size_heuristic(graph, 3, 3)
 
         self.assertTrue(isclose(cut_weight, 0.0))
-        self.assertTrue(np.allclose(sorted(set_a), [0, 1, 2]))
-        self.assertTrue(np.allclose(sorted(set_b), [3, 4, 5]))
+        self.assertTrue(np.allclose(sorted(sum(set_a, ())), [0, 1, 2]))
+        self.assertTrue(np.allclose(sorted(sum(set_b, ())), [3, 4, 5]))
 
     def test_min_cut_optimal_fixed(self):
         state_vector = [0.00000000e+00, 6.94991284e-04, 6.34061054e-02, 2.13286776e-01,
@@ -84,12 +84,12 @@ class TestEntanglement(TestCase):
                         0.00000000e+00, 2.11959665e-04, 6.15966561e-02, 2.17282223e-01,
                         2.49816212e-01, 1.27759885e-01, 2.73632167e-02, 1.20487999e-02]
 
-        graph = entanglement_graph(state_vector, 6)
+        graph = correlation_graph(state_vector, 6, correlation_measure=concurrence)
         (set_a, set_b), cut_weight = min_cut_fixed_size_optimal(graph, 3, 3)
 
         self.assertTrue(isclose(cut_weight, 0.0))
-        self.assertTrue(np.allclose(sorted(set_a), [0, 1, 2]))
-        self.assertTrue(np.allclose(sorted(set_b), [3, 4, 5]))
+        self.assertTrue(np.allclose(sorted(sum(set_a, ())), [0, 1, 2]))
+        self.assertTrue(np.allclose(sorted(sum(set_b, ())), [3, 4, 5]))
 
     def test_min_cut_heuristic_fixed(self):
         state_vector = [0.00000000e+00, 6.94991284e-04, 6.34061054e-02, 2.13286776e-01,
@@ -109,9 +109,9 @@ class TestEntanglement(TestCase):
                         0.00000000e+00, 2.11959665e-04, 6.15966561e-02, 2.17282223e-01,
                         2.49816212e-01, 1.27759885e-01, 2.73632167e-02, 1.20487999e-02]
 
-        graph = entanglement_graph(state_vector, 6)
+        graph = correlation_graph(state_vector, 6, correlation_measure=concurrence)
         (set_a, set_b), cut_weight = min_cut_fixed_size_heuristic(graph, 3, 3)
 
         self.assertTrue(isclose(cut_weight, 0.0))
-        self.assertTrue(np.allclose(sorted(set_a), [0, 1, 2]))
-        self.assertTrue(np.allclose(sorted(set_b), [3, 4, 5]))
+        self.assertTrue(np.allclose(sorted(sum(set_a, ())), [0, 1, 2]))
+        self.assertTrue(np.allclose(sorted(sum(set_b, ())), [3, 4, 5]))
