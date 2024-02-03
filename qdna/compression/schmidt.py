@@ -94,15 +94,11 @@ class SchmidtCompressor(Compressor):
             self.svd = "auto" if opt_params.get("svd") is None else \
                 opt_params.get("svd")
 
-        # The trash and latent qubits must take into account that the qiskit qubits are reversed.
-        complement = sorted(
-            set(range(self.num_qubits)).difference(set(self.partition))
-        )[::-1]
-        self.latent_qubits = [
-            self.num_qubits-i-1 for i in complement
-        ]
-        self.trash_qubits = sorted(
-            set(range(self.num_qubits)).difference(set(self.latent_qubits))
+        # The trash and latent qubits must take into account that the qiskit
+        # qubits are reversed. See line `return circuit.reverse_bits()`.
+        self.trash_qubits = sorted([self.num_qubits-i-1 for i in self.partition])
+        self.latent_qubits = sorted(
+            set(range(self.num_qubits)).difference(set(self.trash_qubits))
         )
 
         if label is None:
@@ -120,17 +116,18 @@ class SchmidtCompressor(Compressor):
             circuit.initialize(self.params)
             return  circuit.inverse()
 
+        # reg_a = trash register, reg_b = latent register.
         circuit, reg_a, reg_b = self._create_quantum_circuit()
 
-        # Schmidt decomposition
+        # Schmidt decomposition.
         rank, svd_u, _, svd_v = schmidt_decomposition(
             self.params, reg_a, rank=self.low_rank, svd=self.svd
         )
 
-        # Schmidt measure of entanglement
+        # Schmidt measure of entanglement.
         e_bits = _to_qubits(rank)
 
-        # Phase 3 and 4 encode gates U and V.T
+        # Phase 3 and 4 encode gates U and V.T.
         self._encode(svd_u, circuit, reg_b)
         self._encode(svd_v.T, circuit, reg_a)
 
