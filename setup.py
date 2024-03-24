@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="qdna-lib",
-    version="0.0.1",
+    version="0.0.2",
     author="qdna team",
     author_email="ifa@yonsei.ac.kr",
     description="A quantum computing library for data science and artificial intelligence",
@@ -23,6 +23,13 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'qclib'
+        'qiskit>=1.0.0',
+        'qiskit-machine-learning>=0.7.2',
+        'qiskit-aer>=0.13.3',
+        'qiskit-algorithms>=0.3.0',
+        'qclib>=0.1.12',
+        'dwave-ocean-sdk>=6.9.0',
+        'torch',
+        'networkx'
     ]
 )
