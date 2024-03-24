@@ -94,7 +94,12 @@ def correlation(state_vector, set_a, set_b, correlation_measure=mutual_informati
 
     return correlation_measure(rho_ab)
 
-def correlation_graph(state_vector, n_qubits, max_set_size=1, correlation_measure=mutual_information):
+def correlation_graph(state_vector,
+                      n_qubits,
+                      min_set_size=1,
+                      max_set_size=1,
+                      correlation_measure=mutual_information
+):
     '''
     Initialize a graph where nodes represent qubits and the weights represent
     the entanglement between pairs of qubits in a register of `n` qubits for a
@@ -104,15 +109,22 @@ def correlation_graph(state_vector, n_qubits, max_set_size=1, correlation_measur
     '''
     if n_qubits <= max_set_size <= 0:
         raise ValueError(
-            "The value of `max_set_size` must be greater than zero and less "
-            "than `n_qubits`."
+            f"The value of `max_set_size` [{max_set_size}] must be greater "
+            f"than zero and less than `n_qubits` [{n_qubits}]."
+        )
+
+    if max_set_size < min_set_size <= 0:
+        raise ValueError(
+            f"The value of `min_set_size` [{min_set_size}] must be greater "
+            f"than zero and less or equal than `max_set_size` "
+            f"[{max_set_size}]."
         )
 
     # Create a graph.
     graph = nx.Graph()
 
     # Add nodes for each set of qubits up to the size `max_set_size`.
-    for set_size in range(1, max_set_size + 1):
+    for set_size in range(min_set_size, max_set_size + 1):
         for qubit_set in itertools.combinations(range(n_qubits), set_size):
             graph.add_node(qubit_set)
 
