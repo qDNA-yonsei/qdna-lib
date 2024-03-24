@@ -4,3 +4,4 @@ qiskit-aer
 qiskit-algorithms
 torch
 qclib
+dwave-ocean-sdk
