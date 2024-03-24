@@ -17,6 +17,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import SamplerQNN
+from qiskit_machine_learning.exceptions import QiskitMachineLearningError
 
 import torch
 import torch.optim as optim
@@ -85,15 +86,19 @@ class NqeBase():
         model.train()   # Set model to training mode
 
         for i in range(iters):
-            X1_batch, X2_batch, Y_batch = self.new_data(batch_size, X, Y) # Random sampling of data.
+            # Random sampling of data.
+            x1_batch, x2_batch, y_batch = self.new_data(batch_size, x, y)
 
-            optimizer.zero_grad(set_to_none=True)  # Initialize gradient
-            output = model(X1_batch, X2_batch)     # Forward pass
-            loss = loss_func(output, Y_batch)      # Calculate loss
-            loss.backward()                        # Backward pass
-            optimizer.step()                       # Optimize weights
+            try:
+                optimizer.zero_grad(set_to_none=True) # Initialize gradient
+                output = model(x1_batch, x2_batch)    # Forward pass
+                loss = loss_func(output, y_batch)     # Calculate loss
+                loss.backward()                       # Backward pass
+                optimizer.step()                      # Optimize weights
 
-            loss_list.append(loss.item())         # Store loss
+                loss_list.append(loss.item())         # Store loss
+            except QiskitMachineLearningError:
+                loss_list.append(loss_list[-1])
 
             if verbose:
                 print(
