@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="qdna-lib",
-    version="0.0.2",
+    version="0.0.3",
     author="qdna team",
     author_email="ifa@yonsei.ac.kr",
     description="A quantum computing library for data science and artificial intelligence",
