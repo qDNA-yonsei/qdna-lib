@@ -5,3 +5,4 @@ qiskit-algorithms
 torch
 qclib
 dwave-ocean-sdk
+networkx
