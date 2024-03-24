@@ -300,7 +300,17 @@ class AeFeatureMap(BlueprintCircuit):
         # the global phase only depends on the first coordinate of the
         # state vector.
         if self._set_global_phase:
-            circuit.global_phase = ((_sign(params[0])-1) / -2) * pi
+            circuit.global_phase += ((_sign(params[0])-1) / -2) * pi
 
         for _ in range(self._reps):
-            self.compose(circuit, self.qubits, inplace=True, wrap=False)
+            # Due to a bug introduced in Qiskit 1.0, it is necessary to use
+            # `wrap=True` when `self._set_global_phase=True`.
+            # The `global_phase` of `circuit` is not taking effect
+            # when `wrap=False`. In future, test whether this is still
+            # necessary. Using the `wrap=True` parameter causes slowdowns.
+            self.compose(
+                circuit,
+                self.qubits,
+                inplace=True,
+                wrap=self._set_global_phase
+            )

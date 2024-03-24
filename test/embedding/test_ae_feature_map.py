@@ -101,8 +101,6 @@ class TestAeFeatureMap(TestCase):
                         -0.14796486,  0.00971746, -0.15238775,  0.12996466,
                         -0.19630254, -0.08859373, -0.12830557,  0.12446281]
 
-#        state_vector = state_vector / np.linalg.norm(state_vector)
-
         feature_map = AeFeatureMap(n_qubits, normalize=False, set_global_phase=True)
 
         circuit = QuantumCircuit(n_qubits)
@@ -111,5 +109,4 @@ class TestAeFeatureMap(TestCase):
 
         state = Statevector(circuit)
 
-        state_vector = state_vector / np.linalg.norm(state_vector)
         self.assertTrue(np.allclose(state_vector, state, rtol=1e-03, atol=1e-05))
