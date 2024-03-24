@@ -26,6 +26,7 @@ class NqeAeFeatureMap(AeFeatureMap, NqeBase):
         insert_barriers: bool = False,
         name: str = "NqeAeFeatureMap",
         nn = None,
+        set_global_phase: bool = False
     ) -> None:
 
         super().__init__(
@@ -44,5 +45,6 @@ class NqeAeFeatureMap(AeFeatureMap, NqeBase):
             'reps':reps,
             'parameter_prefix':parameter_prefix,
             'insert_barriers':insert_barriers,
-            'name':name
+            'name':name,
+            'set_global_phase':set_global_phase
         }
