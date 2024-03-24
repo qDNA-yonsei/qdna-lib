@@ -42,16 +42,6 @@ class Node:
             f"{self.sign*self.norm}"
         )
 
-# def _abs(self):
-#     # SymPy's `Abs` function doesn't work with hybrid optimization backwards.
-#     """Absolute value of a ParameterExpression"""
-#     if _optionals.HAS_SYMENGINE:
-#         import symengine
-#         return ParameterExpression(self._parameter_symbols, symengine.Abs(self._symbol_expr))
-#     else:
-#         from sympy import Abs as sp_abs
-#         return ParameterExpression(self._parameter_symbols, sp_abs(self._symbol_expr))
-
 def _sqrt(self):
     """Square root of a ParameterExpression"""
     if _optionals.HAS_SYMENGINE:
@@ -60,21 +50,8 @@ def _sqrt(self):
     return self._call(sp_sqrt)
 
 def _sign(self):
-    # SymPy's `sign` function doesn't work with hybrid optimization backwards.
     """Sign of a ParameterExpression"""
-    # if _optionals.HAS_SYMENGINE:
-    #     import symengine
-    #     return ParameterExpression(
-    #         self._parameter_symbols, symengine.sign(self._symbol_expr + 1e-4)
-    #     )
-    # else:
-    #     from sympy import sign
-    #     return ParameterExpression(
-    #         self._parameter_symbols, sign(self._symbol_expr + 1e-4)
-    #     )
-
-    # If self is exactly `-10^-4`, the algorithm is interrupted.
-    # This is because the `sign` function will return 0, zeroing the norms.
+    # SymPy's `sign` function doesn't work with hybrid optimization backwards.
     return self / _sqrt(self*self)
 
 def state_decomposition(nqubits, data, normalize=False):
